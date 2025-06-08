@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { createHash } from "../../../helpers/hash.helper.js";
 import User from "../models/users.model.js";
+import Pet from "../models/pets.model.js"
 
 class MocksManager {
   constructor(model) {
@@ -27,7 +28,7 @@ class MocksManager {
     }
   };
 
-  createPets = async () => {
+  createPet = async () => {
     try {
       const newPet = {
         _id: faker.database.mongodbObjectId(),
@@ -35,10 +36,10 @@ class MocksManager {
         species: faker.animal.type(),
         age: faker.number.int({ min: 1, max: 15 }),
       };
-      const one = await this.model.create(newPet)
-      return one
+      const pet = await Pet.create(newPet);
+      return pet;
     } catch (error) {
-      next(error);
+      throw error;
     }
   };
 

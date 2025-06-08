@@ -13,35 +13,6 @@ const createMockUser = async (req, res, next) => {
   }
 };
 
-const createMockPet = async (req, res, next) => {
-  try {
-    const { users, pets } = req.body;
-    if (!users || !pets) {
-      return res
-        .status(400)
-        .json({ error: "Se requieren los campos users y pets" });
-    }
-
-    const createdUsers = [];
-    const createdPets = [];
-
-    for (let i = 0; i < users; i++) {
-      const user = await userManager.create();
-      createdUsers.push(user);
-    }
-
-    for (let i = 0; i < pets; i++) {
-      const pet = await petManager.create();
-      createdPets.push(pet);
-    }
-
-    res.status(200).json({
-      message: `Se generaron ${createdUsers.length} usuarios y ${createdPets.length} mascotas.`,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 
 const readAllMocks = async (req, res, next) => {
   try {
@@ -53,15 +24,33 @@ const readAllMocks = async (req, res, next) => {
   }
 };
 
-const generateData = async (req, res, next) => {
+const createMockPet = async (req, res, next) => {
   try {
     const { users, pets } = req.body;
     if (!users || !pets) {
       return res.status(400).json({ error: "se requieren users y pets" });
     }
+
+    const usersInserted = [];
+    for (let i = 0; i < users; i++) {
+      const createdUser = await mocksManager.create();
+      usersInserted.push(createdUser);
+    }
+
+    const petsInserted = [];
+    for (let i = 0; i < pets; i++) {
+      const createdPet = await mocksManager.createPet();
+      petsInserted.push(createdPet);
+    }
+
+    res.status(201).json({
+      message: "Datos generados correctamente",
+      users: usersInserted.length,
+      pets: petsInserted.length,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-export { createMockUser, createMockPet,readAllMocks };
+export { createMockUser, createMockPet, readAllMocks };
